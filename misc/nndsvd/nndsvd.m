@@ -1,4 +1,4 @@
-function [W,H] = nndsvd(A,k,flag);
+function [W,H] = nndsvd(A,k,flag)
 %
 % This function implements the NNDSVD algorithm described in [1] for
 % initializattion of Nonnegative Matrix Factorization Algorithms.
