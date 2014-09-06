@@ -1,12 +1,22 @@
 load'math/misc/svd'
-
-NB. coclass 'jCUR' NB. uncomment this namespace stuff when you're done
-NB. CUR_z_ =: CUR_jCUR_
-
+load '~addons/math/lapack/lapack.ijs'
+load'~addons/math/lapack/dgesvd.ijs'
 mp=: +/ .*             NB. matrix product
 diag =: (<0 1)&|:      NB. diagonal
 fcols=: ] {"1~ [: i. [  NB. takes first x columns of y
 qrd=: 128!:0            NB. built in QR decomp
+DTOL =: (9!:18 '')^0.5
+
+svdl =: 3 : 0
+ 'u s v' =. dgesvd_jlapack_ y
+ u;(diag s);v
+)
+
+svd =: svdl NB. Use Lapack for now; more robust algorithm
+
+NB. coclass 'jCUR' NB. uncomment this namespace stuff when you're done
+NB. CUR_z_ =: CUR_jCUR_
+
 
 NB. OK: issue with the lapack svd; J is using dgesvd; dgesdd is better
 NB. Oddly, the native svd has the right format, and
@@ -31,7 +41,7 @@ NB. The matlab code originally used x=: 0.05  -no idea where that came from
 NB. There should be a way of automatically finding sqrt(precision) in J, but 
 NB. I have no idea how. This value ties out with the R version.
 pinv =: 3 : 0
- 1.490116e_08 pinv y
+ DTOL pinv y
 :
  'u s v'=. svd y
  posdx =. I. s > >./ 0, x*0{s
