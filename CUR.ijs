@@ -1,18 +1,20 @@
 load'math/misc/svd'
-load '~addons/math/lapack/lapack.ijs'
-load'~addons/math/lapack/dgesvd.ijs'
+NB. load '~addons/math/lapack/lapack.ijs'
+NB. load'~addons/math/lapack/dgesvd.ijs'
+NB. svdl =: 3 : 0
+NB.  'u s v' =. dgesvd_jlapack_ y
+NB.  u;(diag s);v
+NB. )
+NB. svd =: svdl NB. Use Lapack for now; more robust algorithm
+
+
 mp=: +/ .*             NB. matrix product
 diag =: (<0 1)&|:      NB. diagonal
 fcols=: ] {"1~ [: i. [  NB. takes first x columns of y
 qrd=: 128!:0            NB. built in QR decomp
 DTOL =: (9!:18 '')^0.5
 
-svdl =: 3 : 0
- 'u s v' =. dgesvd_jlapack_ y
- u;(diag s);v
-)
 
-svd =: svdl NB. Use Lapack for now; more robust algorithm
 
 NB. coclass 'jCUR' NB. uncomment this namespace stuff when you're done
 NB. CUR_z_ =: CUR_jCUR_
@@ -52,7 +54,7 @@ pinv =: 3 : 0
  end.
 )
 
-NB. *(k;c;r) CUR mx
+NB. *(k;c;r;t) CUR mx
 NB. -mx: m x n matrix
 NB. -k: rank parameter with k << min(m,n)
 NB. -c: number of columns that we want to select from mx
@@ -78,7 +80,7 @@ CUR =: 4 : 0
  C;U;R;cdx;rdx
 )
 
-NB. *(k;c;v) Csel mx
+NB. *(k;c;v;t) Csel mx
 NB. -mx: m x n matrix
 NB. -k: rank parameter with k << min(m,n)
 NB. -c: number of columns that we want to select from mx
@@ -108,15 +110,17 @@ NB. -C m x r matrix contains r cols from mx
 NB. - R: r x n matrix containing r rows from mx
 NB. - G: r x r matrix.
 NB. NOT DONE; NEED QR DECOMP PERMUTE MX
+NB. 
 SKEL=: 4 : 0
+ r =.x
  'U S V'=. r svds y
  'Q R'=. qrd |: V
- pv=. '' NB. permutation mx such that pv{mx = Q mp R
+ pv=. '' NB. permutation mx such that pv{mx = Q mp R; in this case, always diag
  C=. (r&focls pv){"1 y
  'Q R'=. qrd |: U
  pu=. '' NB. permutation mx such that pu{mx = Q mp R
  R=. (r&focls pu){"2 y
- G =. (pinv C) mp mx mp pinv R
+ G =. (pinv C) mp y mp pinv R
  C;R;G
 )
 

@@ -26,3 +26,7 @@ http://sun.stanford.edu/~rmunk/PROPACK/paper.ps.gz
 
 R presently uses dgesdd and zgesdd, so as an intermediate step, building the
 interface for that might help things.
+
+***********
+The test data set is taken from R, which is in turn taken from the Gene Expression 
+Omnibus database (GSE3443) from the Stanford microarray DB.
